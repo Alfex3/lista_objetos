@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <title>Lista</title>
+        <meta charset="utf-8"/> 
+    </head>
+    <body>
+    </body>
+    <script>
+        //https://github.com/Alfex3
+        function Person(name,surname){
+            this.name = name;
+            this.surname = surname;
+            this.toString = function() {
+                return this.name + " " + this.surname;
+            }
+        }
+        function List(max) {
+            this.elements = [];
+            this.max = max;
+            this.isEmpty = function() {
+                return (this.elements.length === 0);
+            }
+            this.isFull = function() {
+                return (this.elements.length === max);
+            }
+            this.size = function() {
+                return this.elements.length;
+            }
+            this.add = function(elem) {
+                if (!(elem instanceof Person)) throw new NotAPersonException;
+                if (this.isFull()) throw new ListIsFullException;
+                this.elements.push(elem);
+                return this.elements.length;
+            }
+            this.addAt = function(elem,index) {
+                if (!(elem instanceof Person)) throw new NotAPersonException;
+                if (this.isFull()) throw new ListIsFullException;
+                if (index >= this.max) throw new IndexOutOfBoundsException;
+                this.elements.splice(index,0,elem);
+                return this.elements.length;
+            }
+            this.get = function(index){
+                if (index >= this.max) throw new IndexOutOfBoundsException;
+                return this.elements[index];
+            }
+            this.toString = function() {
+                var people = [];
+                for (p of this.elements) {
+                    people.push(p.toString());
+                }
+                return people.toString();
+            }
+            this.indexOf = function(name,surname) {
+                return this.elements.findIndex(function(p){return (p.name === name && p.surname === surname)});
+            }
+            this.lastIndexOf = function(name,surname) {
+                this.elements.reverse();
+                var index = this.size() - 1 - this.elements.findIndex(function(p){return (p.name === name && p.surname === surname)});
+                this.elements.reverse();
+                return index;
+            }
+            this.capacity = function() {
+                return max;
+            }
+            this.clear = function() {
+                this.length = 0;
+            }
+            this.firstElement = function() {
+                if (this.isEmpty()) throw new ListIsEmptyException;
+                return this.elements[0];
+            }
+            this.lastElement = function() {
+                if (this.isEmpty()) throw new ListIsEmptyException;
+                return this.elements[this.elements.length - 1];
+            }
+            this.remove = function(index) {
+                if (index >= this.max) throw new IndexOutOfBoundsException;
+                return this.elements.splice(index,1)[0];
+            }
+            this.removeElement = function(name,surname) {
+                var index = this.elements.findIndex(function(p){return (p.name === name && p.surname === surname)});
+                if (index === -1) {
+                    return false;
+                }
+                else {
+                    this.elements.splice(index,1);
+                    return true;
+                }
+            }
+            this.set = function(elem,surname,index) {
+                if (!(elem instanceof Person)) throw new NotAPersonException;
+                if (index >= this.max) throw new IndexOutOfBoundsException;
+                return this.elements.splice(index,1,elem)[0];
+            }
+        }
+        function NotAPersonException() {
+            this.name = "NotAPersonException";
+            this.message = "Element is not a person";
+        }
+        NotAPersonException.prototype = new Error;
+        function IndexOutOfBoundsException() {
+            this.name = "IndexOutOfBoundsException";
+            this.message = "Index is out of bounds";
+        }
+        IndexOutOfBoundsException.prototype = new Error;
+        function ListIsFullException() {
+            this.name = "ListIsFullException";
+            this.message = "List is full";
+        }
+        ListIsFullException.prototype = new Error;
+        function ListIsEmptyException() {
+            this.name = "ListIsEmptyException";
+            this.message = "List is empty";
+        }
+        ListIsEmptyException.prototype = new Error;
+        function test() {
+            var lista = new List(5);
+            console.log(lista.isEmpty());//true
+            console.log(lista.isFull());//false
+            console.log(lista.size());//0
+            console.log(lista.add(new Person("Phoenix","Wright")));//1
+            console.log(lista.add(new Person("Maya","Fey")));//2
+            console.log(lista.add(new Person("Miles","Edgeworth")));//3
+            console.log(lista.add(new Person("Dick","Gumshoe")));//4
+            console.log(lista.addAt(new Person("Maya","Fey"),3));//5
+            console.log(lista.get(3));//{name:"Maya", surname:"Fey"}
+            console.log(lista.toString());//Phoenix Wright, Maya Fey, Miles Edgeworth, Maya Fey, Dick Gumshoe
+            console.log(lista.indexOf("Maya","Fey"));//1
+            console.log(lista.lastIndexOf("Maya","Fey"));//3
+            console.log(lista.firstElement());//{name:"Phoenix" surname: "Wright"}
+            console.log(lista.lastElement());//{name:"Dick" surname: "Gumshoe"}
+            console.log(lista.remove(2));//{name:"Miles" surname: "Edgeworth"}
+            console.log(lista.toString());//Phoenix Wright, Maya Fey, Maya Fey, Dick Gumshoe
+            console.log(lista.removeElement("Maya","Fey"));//true
+            console.log(lista.toString());//Phoenix Wright, Maya Fey, Dick Gumshoe
+            console.log(lista.set(new Person("Mia","Fey"),2));//{name: "Dick", surname: "Gumshoe"}
+            console.log(lista.toString());//Phoenix Wright, Maya Fey, Mia Fey
+            lista.clear();
+            console.log(lista.toString());//
+        }
+        window.onload = test();
+    </script>
+</html>
